@@ -41,37 +41,31 @@ jobs:
             }
           }
         '
-        label: backlog
+        label: Backlog
         script: |
           const variables = {
             owner: context.repo.owner,
             name: context.repo.repo,
             search: core.getInput('label')
           }
+          console.log(variables)
           const result = await github.graphql(core.getInput('query'), variables)
           if (!result) {
+            console.log("result", result)
             core.setFailed('GraphQL request failed')
           } else {
+            console.log("result", result)
             return result
           }
-    - name: Unpin issues
-      id: unpinIssues
+    - name: logging projects
+      id: echoProjects
       uses: actions/github-script@0.9.0
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         projects: ${{ steps.findColumnsByProjectName.outputs.result }}
-        query: '
-          mutation unpinIssue($issueId: ID!){
-            unpinIssue(input: { issueId: $issueId }) {
-              issue {
-                repository {
-                  id
-                }
-              }
-            }
-          }'
         script: |
           const findColumnsByProjectName = JSON.parse(core.getInput('projects'))
+          console.log(findColumnsByProjectName)
           for (const project of findColumnsByProjectName.repository.projects.nodes) {
             console.log(project)
           }
