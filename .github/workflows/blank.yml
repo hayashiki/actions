@@ -46,7 +46,7 @@ jobs:
           const variables = {
             owner: context.repo.owner,
             name: context.repo.repo,
-            search: ${{secrets.GITHUB_TOKEN}}
+            search: core.getInput('label')
           }
           const result = await github.graphql(core.getInput('query'), variables)
           if (!result) {
@@ -59,8 +59,7 @@ jobs:
       uses: actions/github-script@0.9.0
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
-        issues: ${{ steps.pinnedIssues.outputs.result }}
-        label: 'AWS'
+        projects: ${{ steps.findColumnsByProjectName.outputs.result }}
         query: '
           mutation unpinIssue($issueId: ID!){
             unpinIssue(input: { issueId: $issueId }) {
@@ -72,8 +71,9 @@ jobs:
             }
           }'
         script: |
-          const issue = core.getInput('issue')
-          console.log("issue", issue)          
+          const findColumnsByProjectName = JSON.parse(core.getInput('projects'))
           for (const project of findColumnsByProjectName.repository.projects.nodes) {
             console.log(project)
           }
+          const issue = core.getInput('issue')
+          console.log("issue", issue)          
