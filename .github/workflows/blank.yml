@@ -1,0 +1,79 @@
+name: 'Automatically add issue to project'
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Add Backlog Project
+      id: findColumnsByProjectName
+      uses: actions/github-script@0.9.0
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        query: '
+          query($owner: String!, $name: String!, $search: String!) {
+            repository(owner: $owner, name: $name) {
+              name
+              projects(first: 5, search: $search) {
+                edges {
+                  cursor
+                  node {
+                    id
+                    url
+                    name
+                    columns(first: 10) {
+                        edges {
+                          cursor
+                          node {
+                            id
+                            name
+                          }
+                        }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        '
+        label: backlog
+        script: |
+          const variables = {
+            owner: context.repo.owner,
+            name: context.repo.repo,
+            search: ${{secrets.GITHUB_TOKEN}}
+          }
+          const result = await github.graphql(core.getInput('query'), variables)
+          if (!result) {
+            core.setFailed('GraphQL request failed')
+          } else {
+            return result
+          }
+    - name: Unpin issues
+      id: unpinIssues
+      uses: actions/github-script@0.9.0
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        issues: ${{ steps.pinnedIssues.outputs.result }}
+        label: 'AWS'
+        query: '
+          mutation unpinIssue($issueId: ID!){
+            unpinIssue(input: { issueId: $issueId }) {
+              issue {
+                repository {
+                  id
+                }
+              }
+            }
+          }'
+        script: |
+          const issue = core.getInput('issue')
+          console.log("issue", issue)          
+          for (const project of findColumnsByProjectName.repository.projects.nodes) {
+            console.log(project)
+          }
