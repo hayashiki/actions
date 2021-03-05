@@ -59,9 +59,16 @@ jobs:
           }
     - name: logging projects
       id: echoProjects
-      uses: actions/github-script@0.9.0
+      uses: actions/github-script@0.9.0      
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
+        query: '
+          mutation($contentId: String!, $projectColumnId: String!) {
+            addProjectCard(input: $contentId, projectColumnId: $name) {
+              clientMutationId
+            }
+          }
+        '
         projects: ${{ steps.findColumnsByProjectName.outputs.result }}
         script: |
           const findColumnsByProjectName = JSON.parse(core.getInput('projects'))
@@ -70,6 +77,22 @@ jobs:
             console.log(project)
             console.log(project.node)
             console.log(project.node.columns)
+
+            let columnId;
+            for (const column of project.node.columns.edges) {
+              console.log(column)
+              columnId = column.name
+            }
           }
           const issue = core.getInput('issue')
-          console.log("issue", issue)          
+          console.log("issue", ctx)
+          console.log("issue", ctx.issue)
+          const variables = {
+            contentId: issue.id,
+            projectColumnId: columnId,
+          }
+          const result = await github.graphql(core.getInput('query'), variables)
+          console.log(result)          
+          if (!result) {
+            core.setFailed('GraphQL request failed')
+          } 
