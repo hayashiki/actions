@@ -66,8 +66,10 @@ jobs:
         script: |
           const findColumnsByProjectName = JSON.parse(core.getInput('projects'))
           console.log(findColumnsByProjectName)
-          for (const project of findColumnsByProjectName.repository.projects.nodes) {
+          for (const project of findColumnsByProjectName.repository.projects.edges) {
             console.log(project)
+            console.log(project.node)
+            console.log(project.node.columns)
           }
           const issue = core.getInput('issue')
           console.log("issue", issue)          
