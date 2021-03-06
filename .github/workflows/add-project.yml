@@ -12,7 +12,7 @@ jobs:
       uses: actions/checkout@v2
     - name: Add Backlog Project
       id: findColumnsByProjectName
-      uses: actions/github-script@3
+      uses: actions/github-script@v3
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         query: '
@@ -59,7 +59,7 @@ jobs:
           }
     - name: logging projects
       id: echoProjects
-      uses: actions/github-script@3
+      uses: actions/github-script@v3
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         query: '
