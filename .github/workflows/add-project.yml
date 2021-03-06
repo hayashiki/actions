@@ -82,7 +82,7 @@ jobs:
             for (const column of project.node.columns.edges) {
               console.log(column)
               if (column.name == core.getInput('columnName')) {
-                columnId = column.id
+                columnId = column.node.id
                 return
               }
             }
