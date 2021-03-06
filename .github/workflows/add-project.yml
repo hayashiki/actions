@@ -64,7 +64,7 @@ jobs:
         github-token: ${{secrets.GITHUB_TOKEN}}
         query: '
           mutation($contentId: String!, $projectColumnId: String!) {
-            addProjectCard(AddProjectCardInput{ contentId: $contentId, projectColumnId: $projectColumnId }) {
+            addProjectCard(input: { contentId: $contentId, projectColumnId: $projectColumnId }) {
               clientMutationId
             }
           }
