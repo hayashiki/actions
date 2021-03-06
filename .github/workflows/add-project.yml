@@ -41,12 +41,12 @@ jobs:
             }
           }
         '
-        label: Backlog
+        projectName: Backlog
         script: |
           const variables = {
             owner: context.repo.owner,
             name: context.repo.repo,
-            search: core.getInput('label')
+            search: core.getInput('projectName')
           }
           console.log(variables)
           const result = await github.graphql(core.getInput('query'), variables)
@@ -62,8 +62,9 @@ jobs:
       uses: actions/github-script@v3
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
+        columnName: "To do"
         query: '
-          mutation($contentId: String!, $projectColumnId: String!) {
+          mutation($contentId: ID!, $projectColumnId: ID!) {
             addProjectCard(input: { contentId: $contentId, projectColumnId: $projectColumnId }) {
               clientMutationId
             }
@@ -80,13 +81,16 @@ jobs:
             console.log(project.node.columns)
             for (const column of project.node.columns.edges) {
               console.log(column)
-              columnId = column.name
+              if (column.name == core.getInput('columnName')) {
+                columnId = column.id
+                return
+              }
             }
           }
           const issue = context.payload.issue
           console.log("issue", issue)
           const variables = {
-            contentId: issue.id,
+            contentId: issue.node_id,
             projectColumnId: columnId,
           }
           const result = await github.graphql(core.getInput('query'), variables)
