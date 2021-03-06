@@ -88,7 +88,6 @@ jobs:
           }
           const issue = context.payload.issue
           console.log("issue", issue)
-          console.log("variables", variables)
           const variables = {
             contentId: issue.node_id,
             projectColumnId: columnId ,
