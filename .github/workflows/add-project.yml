@@ -83,7 +83,6 @@ jobs:
               console.log(column)
               if (column.node.name == core.getInput('columnName')) {
                 columnId = column.node.id
-                return
               }
             }
           }
@@ -92,7 +91,7 @@ jobs:
           console.log("variables", variables)
           const variables = {
             contentId: issue.node_id,
-            projectColumnId: columnId + "aaa",
+            projectColumnId: columnId ,
           }
           console.log("variables", variables)
           const result = await github.graphql(core.getInput('query'), variables)
