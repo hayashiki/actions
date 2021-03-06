@@ -12,7 +12,7 @@ jobs:
       uses: actions/checkout@v2
     - name: Add Backlog Project
       id: findColumnsByProjectName
-      uses: actions/github-script@0.9.0
+      uses: actions/github-script@3.1.0
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         query: '
@@ -59,12 +59,12 @@ jobs:
           }
     - name: logging projects
       id: echoProjects
-      uses: actions/github-script@0.9.0      
+      uses: actions/github-script@3.1.0
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         query: '
           mutation($contentId: String!, $projectColumnId: String!) {
-            addProjectCard(input: $contentId, projectColumnId: $name) {
+            addProjectCard(AddProjectCardInput{ contentId: $contentId, projectColumnId: $projectColumnId }) {
               clientMutationId
             }
           }
