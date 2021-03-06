@@ -89,9 +89,10 @@ jobs:
           }
           const issue = context.payload.issue
           console.log("issue", issue)
+          console.log("variables", variables)
           const variables = {
             contentId: issue.node_id,
-            projectColumnId: columnId,
+            projectColumnId: columnId + "aaa",
           }
           console.log("variables", variables)
           const result = await github.graphql(core.getInput('query'), variables)
