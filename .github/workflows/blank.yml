@@ -84,7 +84,7 @@ jobs:
               columnId = column.name
             }
           }
-          const issue = context.payload.pull_request.number
+          const issue = context.payload.issue.number
           console.log("issue", issue)
           const variables = {
             contentId: issue.id,
