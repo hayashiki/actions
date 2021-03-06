@@ -73,18 +73,17 @@ jobs:
         script: |
           const findColumnsByProjectName = JSON.parse(core.getInput('projects'))
           console.log(findColumnsByProjectName)
+          let columnId;
           for (const project of findColumnsByProjectName.repository.projects.edges) {
             console.log(project)
             console.log(project.node)
             console.log(project.node.columns)
-
-            let columnId;
             for (const column of project.node.columns.edges) {
               console.log(column)
               columnId = column.name
             }
           }
-          const issue = context.payload.issue.number
+          const issue = context.payload.issue
           console.log("issue", issue)
           const variables = {
             contentId: issue.id,
