@@ -81,7 +81,7 @@ jobs:
             console.log(project.node.columns)
             for (const column of project.node.columns.edges) {
               console.log(column)
-              if (column.name == core.getInput('columnName')) {
+              if (column.node.name == core.getInput('columnName')) {
                 columnId = column.node.id
                 return
               }
@@ -93,6 +93,7 @@ jobs:
             contentId: issue.node_id,
             projectColumnId: columnId,
           }
+          console.log("variables", variables)
           const result = await github.graphql(core.getInput('query'), variables)
           if (!result) {
             core.setFailed('GraphQL request failed')
