@@ -5,14 +5,14 @@ on:
     types: [opened]
 
 jobs:
-  test:
+  add-project:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Add Backlog Project
       id: findColumnsByProjectName
-      uses: actions/github-script@3.1.0
+      uses: actions/github-script@3
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         query: '
@@ -59,7 +59,7 @@ jobs:
           }
     - name: logging projects
       id: echoProjects
-      uses: actions/github-script@3.1.0
+      uses: actions/github-script@3
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         query: '
