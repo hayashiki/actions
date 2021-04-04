@@ -10,6 +10,46 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+      
+
+    - name: Find project on issue 
+      id: existsOnIssue
+      uses: actions/github-script@v3
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        query: '
+          query($owner: String!, $name: String!) {
+            repository(owner: $owner, name: $name) {
+              issue(number: const issue = context.payload.issue) {
+                id
+                projectCards {
+                  edges {
+                    node {
+                      id
+                      column {
+                        id
+                        name
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        '
+        script: |
+          const variables = {
+            owner: context.repo.owner,
+            name: context.repo.repo,
+          }
+          const result = await github.graphql(core.getInput('query'), variables)
+          if (!result) {
+            console.log("result", result)
+            core.setFailed('GraphQL request failed')
+          } else {
+            console.log("result", result)
+            return result
+          }
     - name: Add Backlog Project
       id: findColumnsByProjectName
       uses: actions/github-script@v3
@@ -78,21 +118,17 @@ jobs:
           for (const project of findColumnsByProjectName.repository.projects.edges) {
             console.log(project)
             console.log(project.node)
-            console.log(project.node.columns)
             for (const column of project.node.columns.edges) {
-              console.log(column)
               if (column.node.name == core.getInput('columnName')) {
                 columnId = column.node.id
               }
             }
           }
           const issue = context.payload.issue
-          console.log("issue", issue)
           const variables = {
             contentId: issue.node_id,
             projectColumnId: columnId ,
           }
-          console.log("variables", variables)
           const result = await github.graphql(core.getInput('query'), variables)
           if (!result) {
             core.setFailed('GraphQL request failed')
