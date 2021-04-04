@@ -17,6 +17,7 @@ jobs:
       uses: actions/github-script@v3
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
+        result-encoding: string
         query: '
           query($owner: String!, $name: String!, $issueNum: Int!) {
             repository(owner: $owner, name: $name) {
