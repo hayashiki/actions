@@ -45,6 +45,11 @@ jobs:
           }
           console.log("variables", variables)
           const result = await github.graphql(core.getInput('query'), variables)
+          
+          for (const card of result.projectCards.edges) {
+            console.log("card.node.project.name")
+            console.log(card.node.project.name)
+          }          
           if (!result) {
             console.log("result", result)
             core.setFailed('GraphQL request failed')
