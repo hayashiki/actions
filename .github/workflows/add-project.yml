@@ -46,7 +46,7 @@ jobs:
           console.log("variables", variables)
           const result = await github.graphql(core.getInput('query'), variables)
           
-          for (const card of result.projectCards.edges) {
+          for (const card of result.issue.projectCards.edges) {
             console.log("card.node.project.name")
             console.log(card.node.project.name)
           }          
