@@ -25,8 +25,7 @@ jobs:
                 projectCards {
                   edges {
                     node {
-                      id
-                      column {
+                      project {
                         id
                         name
                       }
