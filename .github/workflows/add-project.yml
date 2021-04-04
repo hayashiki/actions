@@ -62,7 +62,7 @@ jobs:
           }
     - name: Add Backlog Project
       id: findColumnsByProjectName
-      if: steps.conditionCheckStep.outputs.exists == true
+      if: steps.conditionCheckStep.outputs.exists == 'true'
       uses: actions/github-script@v3
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
@@ -110,7 +110,7 @@ jobs:
           }
     - name: logging projects
       id: echoProjects
-      if: steps.conditionCheckStep.outputs.exists == "true"
+      if: steps.conditionCheckStep.outputs.exists == 'true'
       uses: actions/github-script@v3
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
