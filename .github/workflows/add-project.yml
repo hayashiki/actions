@@ -18,9 +18,9 @@ jobs:
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         query: '
-          query($owner: String!, $name: String!, $issueId: Int!) {
+          query($owner: String!, $name: String!, $issueNum: Int!) {
             repository(owner: $owner, name: $name) {
-              issue(number: $issueId) {
+              issue(number: $issueNum) {
                 id
                 projectCards {
                   edges {
@@ -41,7 +41,7 @@ jobs:
           const variables = {
             owner: context.repo.owner,
             name: context.repo.repo,
-            issueId: context.payload.issue.id
+            issueNum: context.payload.issue.number
           }
           console.log("variables", variables)
           const result = await github.graphql(core.getInput('query'), variables)
