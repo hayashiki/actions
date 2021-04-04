@@ -13,7 +13,7 @@ jobs:
       
 
     - name: Find project on issue 
-      id: existsOnIssue
+      id: conditionCheckStep
       uses: actions/github-script@v3
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
@@ -44,20 +44,25 @@ jobs:
           }
           console.log("variables", variables)
           const result = await github.graphql(core.getInput('query'), variables)
-          
+          let exists = false
           for (const card of result.repository.issue.projectCards.edges) {
             console.log("card.node.project.name")
             console.log(card.node.project.name)
+            if (card.node.project.name == "Backlog") {
+              console.log("exists")
+              exists = true
+            }
           }          
           if (!result) {
             console.log("result", result)
             core.setFailed('GraphQL request failed')
           } else {
-            console.log("result", result)
-            return result
+            console.log("exists", exists)
+            return exists
           }
     - name: Add Backlog Project
       id: findColumnsByProjectName
+      if: steps.conditionCheckStep.outputs.exists == true
       uses: actions/github-script@v3
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
@@ -105,6 +110,7 @@ jobs:
           }
     - name: logging projects
       id: echoProjects
+      if: steps.conditionCheckStep.outputs.exists == true
       uses: actions/github-script@v3
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
