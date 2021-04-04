@@ -45,13 +45,13 @@ jobs:
           }
           console.log("variables", variables)
           const result = await github.graphql(core.getInput('query'), variables)
-          let exists = "false"
+          let exists = ""
           for (const card of result.repository.issue.projectCards.edges) {
             console.log("card.node.project.name")
             console.log(card.node.project.name)
             if (card.node.project.name == "Backlog") {
               console.log("exists")
-              exists = "true"
+              exists = "skip"
             }
           }          
           if (!result) {
@@ -65,7 +65,7 @@ jobs:
       run: echo "${{steps.conditionCheckStep.outputs.result}}"
     - name: Add Backlog Project
       id: findColumnsByProjectName
-      if: steps.conditionCheckStep.outputs.result == 'true'
+      if: steps.conditionCheckStep.outputs.result != 'skip'
       uses: actions/github-script@v3
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
@@ -113,7 +113,7 @@ jobs:
           }
     - name: logging projects
       id: echoProjects
-      if: steps.conditionCheckStep.outputs.result == 'true'
+      if: steps.conditionCheckStep.outputs.result != 'skip'
       uses: actions/github-script@v3
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
