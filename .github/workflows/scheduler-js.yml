@@ -1,0 +1,33 @@
+name: slack-notify
+on:
+  push:
+    branches:
+      - "schedules"
+  schedule:
+    - cron: "0 3 * * 3" # JST 12:00 (Mon)
+jobs:
+  slack-notify:
+    name: slack-notify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Send to slack
+        id: slack
+        uses: slackapi/slack-github-action@v1.1８.0
+        with:
+          payload: |
+            {
+              "text": "job sample step result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "job sample step result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
