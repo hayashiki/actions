@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [main]
 
-env:
-  channel: C01DC7NL1QU
-
 jobs:
   update_release_draft:
     name: Update release draft
