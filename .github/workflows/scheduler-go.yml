@@ -1,4 +1,4 @@
-name: bot-wed
+name: slack-notify
 
 on:
   push:
